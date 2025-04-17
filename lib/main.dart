@@ -13,7 +13,8 @@ class MandangonApp extends StatelessWidget {
     return MaterialApp(
       title: 'MandangonApp',
       theme: ThemeData(
-        scaffoldBackgroundColor: Colors.transparent, // Fondo transparente para ver la imagen
+        scaffoldBackgroundColor:
+            Colors.transparent, // Fondo transparente para ver la imagen
         primaryColor: Color.fromARGB(255, 145, 215, 118),
         hintColor: Color.fromARGB(255, 115, 226, 93),
         textTheme: const TextTheme(
@@ -73,7 +74,8 @@ class MainEstado extends State<Main> {
                     onPressed: () {
                       Navigator.push(
                         context,
-                        MaterialPageRoute(builder: (context) => IniciarSesion()),
+                        MaterialPageRoute(
+                            builder: (context) => IniciarSesion()),
                       );
                     },
                     label: const Text(

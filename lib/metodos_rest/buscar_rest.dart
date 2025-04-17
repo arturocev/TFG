@@ -1,6 +1,7 @@
 import 'aleatorio_rest.dart';
 
-void buscarRestaurantes(String query, List<dynamic> todosRestaurantes, Function setState, List<dynamic> listaVisible) {
+void buscarRestaurantes(String query, List<dynamic> todosRestaurantes,
+    Function setState, List<dynamic> listaVisible) {
   final resultados = todosRestaurantes.where((rest) {
     final nombre = rest['rest_nom'].toString().toLowerCase();
     final tipo = rest['rest_tipo_com'].toString().toLowerCase();
@@ -10,6 +11,12 @@ void buscarRestaurantes(String query, List<dynamic> todosRestaurantes, Function 
   }).toList();
 
   setState(() {
-    listaVisible = query.isEmpty ? obtenerAleatorios(todosRestaurantes, 10) : resultados;
+    listaVisible.clear(); // LIMPIAMOS PRIMERO
+    if (query.isEmpty) {
+      listaVisible.addAll(
+          obtenerAleatorios(todosRestaurantes, 10)); // Añadimos aleatorios
+    } else {
+      listaVisible.addAll(resultados); // Añadimos resultados filtrados
+    }
   });
 }
