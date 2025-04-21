@@ -1,6 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:mandangon/metodos_lr/aniadir_usu.dart';
+import 'package:mandangon/services/auth_google.dart';
 import '../metodos_lr/inicio_sesion.dart';
 import 'contrasena.dart';
 import 'inicio.dart';
@@ -157,6 +160,48 @@ class ISEstado extends State<IniciarSesion>
                       child: const Text("Iniciar sesión"),
                     ),
                   ),
+                  // BOTÓN PARA INICIAR SESIÓN CON GOOGLE
+                  Padding(
+                    padding: const EdgeInsets.only(top: 10),
+                    child: TextButton(
+                      onPressed: () async {
+                        try {
+                          final user = await AuthUser().loginGoogle();
+                          if (user != null) {
+                            await AgregarUsuario.agregarUsuario(
+                            context,
+                            user.displayName, // Usar el nombre completo limpio
+                            user.email,
+                            "",
+                            "",
+                            "",
+                          );
+                          var idGoogle = await inicioSesion(
+                            user.email,
+                            "",
+                            context);
+                          if (idGoogle != null) {
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PantallaPrincipal(usuarioId: idGoogle['id'], nombreUsuario: "", usuarioNombre: user.displayName)));
+                          }
+                            print("error");
+                          }
+
+                        } on FirebaseAuthException catch(error) {
+                          print(error.message);
+                        }
+                        catch (e) {
+                          print(e);
+                        }
+                      },
+                      child: const Text(
+                        "Iniciar sesión con Google",
+                        style: TextStyle(
+                          color: Color.fromARGB(255, 0, 7, 138), fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                  ),
+
                   // NUEVO BOTÓN para "¿Olvidaste la contraseña?"
                   Padding(
                     padding: const EdgeInsets.only(top: 10),

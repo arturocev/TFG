@@ -33,11 +33,12 @@ class AgregarUsuario {
           // ignore: use_build_context_synchronously
           mensaje(context, "Error", data["mensaje"]);
         } else {
-          mensaje(
+           if (contrasenia != "") {
+            mensaje(
             // ignore: use_build_context_synchronously
             context,
             "Cuenta Creada",
-            "Tu cuenta ha sido creada con éxito. Ahora puedes iniciar sesión.",
+            "Tu cuenta ha sido creada con éxito. Ahora puedes iniciar sesion.",
             onAceptar: () {
               Navigator.pop(context);
               Navigator.pushReplacement(
@@ -46,6 +47,7 @@ class AgregarUsuario {
               );
             },
           );
+          }
         }
       } else {
         // ignore: use_build_context_synchronously
