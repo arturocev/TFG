@@ -248,36 +248,49 @@ class PantallaPerfilState extends State<PantallaPerfil> {
       imageProvider = const AssetImage("assets/avatar.png");
     }
 
-    // Al salir de la pantalla de perfil, devolvemos si se actualizó la imagen.
-    return WillPopScope(
-      onWillPop: () async {
-        Navigator.pop(context, _updated);
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(title: const Text("Perfil")),
-        body: Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              GestureDetector(
-                onTap: _showImageOptions,
-                child: CircleAvatar(
-                  radius: 60,
-                  backgroundImage: imageProvider,
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton.icon(
-                onPressed: _showImageOptions,
-                icon: const Icon(Icons.image),
-                label: const Text("Editar imagen"),
-              ),
-              const SizedBox(height: 40),
-              Text(_userName, style: const TextStyle(fontSize: 16)),
-            ],
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Perfil", style: TextStyle(fontWeight: FontWeight.bold)),
+        backgroundColor: const Color(0xFFECC099),
+      ),
+      body: Stack(
+        children: [
+          Positioned.fill(
+            child: Image.asset("assets/fondo1.png", fit: BoxFit.cover), // Fondo similar al de la pantalla principal
           ),
-        ),
+          Center(
+            child: Padding(
+              padding: const EdgeInsets.all(20.0),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  GestureDetector(
+                    onTap: _showImageOptions,
+                    child: CircleAvatar(
+                      radius: 80,
+                      backgroundImage: imageProvider,
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: _showImageOptions,
+                    icon: const Icon(Icons.image),
+                    label: const Text("Editar imagen"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFECC099),
+                      padding: const EdgeInsets.symmetric(vertical: 15),
+                    ),
+                  ),
+                  const SizedBox(height: 40),
+                  Text(
+                    _userName,
+                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }

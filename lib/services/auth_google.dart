@@ -17,4 +17,13 @@ class AuthUser {
     final userCredential = await FirebaseAuth.instance.signInWithCredential(credential);
     return userCredential.user;
   }
+
+  Future<void> cerrarSesion() async {
+    try {
+      await GoogleSignIn().signOut();
+    } catch (_) {}
+    await FirebaseAuth.instance.signOut();
+  }
+
+
 }

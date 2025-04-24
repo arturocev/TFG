@@ -180,10 +180,7 @@ class ISEstado extends State<IniciarSesion>
                             user.email,
                             "",
                             context);
-                          if (idGoogle != null) {
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => PantallaPrincipal(usuarioId: idGoogle['id'], nombreUsuario: "", usuarioNombre: user.displayName)));
-                          }
-                            print("error");
+                            Navigator.push(context, MaterialPageRoute(builder: (context) => PantallaPrincipal(usuarioId: idGoogle?['id'], nombreUsuario: "", usuarioNombre: user.displayName)));
                           }
 
                         } on FirebaseAuthException catch(error) {
