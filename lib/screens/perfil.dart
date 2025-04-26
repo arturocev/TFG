@@ -22,9 +22,8 @@ class PantallaPerfilState extends State<PantallaPerfil> {
   String? imgLocal;
   String _userName = 'Sin usuario';
   final String urlServidor = "http://localhost/mandangon";
-  bool _updated = false; // Indica si se modificó la imagen
+  bool _updated = false;
 
-  // Claves únicas para cada usuario
   String get _keyNombreUsuario => 'nombre_usuario_${widget.usuarioId}';
   String get _keyProfileImage => 'profile_image_${widget.usuarioId}';
 
@@ -42,8 +41,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
     if (userName == null || userName.isEmpty) {
       try {
         final response = await http.get(
-          Uri.parse(
-              '$urlServidor/get_user_name.php?usuario_id=${widget.usuarioId}'),
+          Uri.parse('$urlServidor/get_user_name.php?usuario_id=${widget.usuarioId}'),
         );
         if (response.statusCode == 200) {
           final responseData = jsonDecode(response.body);
@@ -69,11 +67,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
     final prefs = await SharedPreferences.getInstance();
     String? savedImagePath = prefs.getString(_keyProfileImage);
 
-    // En móvil: usar File.existsSync(); en Web: usamos la URL directamente.
-    if (!kIsWeb &&
-        savedImagePath != null &&
-        savedImagePath.isNotEmpty &&
-        File(savedImagePath).existsSync()) {
+    if (!kIsWeb && savedImagePath != null && savedImagePath.isNotEmpty && File(savedImagePath).existsSync()) {
       setState(() {
         imgLocal = savedImagePath;
       });
@@ -82,18 +76,14 @@ class PantallaPerfilState extends State<PantallaPerfil> {
         imgLocal = savedImagePath;
       });
     } else {
-      // Si no hay imagen guardada, intenta cargarla desde el servidor.
       try {
         final response = await http.get(
-          Uri.parse(
-              '$urlServidor/get_user_image.php?id_usu=${widget.usuarioId}'),
+          Uri.parse('$urlServidor/get_user_image.php?id_usu=${widget.usuarioId}'),
         );
         if (response.statusCode == 200) {
           final responseData = jsonDecode(response.body);
           if (!responseData['error'] && responseData['image_path'] != null) {
-            final imageUrl = '$urlServidor/' +
-                responseData['image_path'] +
-                '?v=${DateTime.now().millisecondsSinceEpoch}';
+            final imageUrl = '$urlServidor/' + responseData['image_path'] + '?v=${DateTime.now().millisecondsSinceEpoch}';
             await prefs.setString(_keyProfileImage, imageUrl);
             setState(() {
               imgLocal = imageUrl;
@@ -111,7 +101,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
     if (imagenSeleccionada != null) {
       bool success = await _cargarImagenAlServidor(imagenSeleccionada);
       if (success) {
-        _updated = true; // Se modificó la imagen
+        _updated = true;
         await _cargarImagenUsuario();
       }
     }
@@ -144,8 +134,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
       final responseJson = jsonDecode(responseBody);
       if (response.statusCode == 200 && !responseJson['error']) {
         final prefs = await SharedPreferences.getInstance();
-        String urlCompleta = responseJson[
-            'image_path']; // Ej.: "http://localhost/mandangon/uploads/user_1.jpg"
+        String urlCompleta = responseJson['image_path'];
         await prefs.setString(_keyProfileImage, urlCompleta);
         return true;
       } else {
@@ -170,7 +159,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
         await prefs.remove(_keyProfileImage);
         setState(() {
           imgLocal = null;
-          _updated = true; // Se marcó la actualización (imagen eliminada)
+          _updated = true;
         });
       }
     } catch (e) {
@@ -184,8 +173,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
           builder: (context) {
             return AlertDialog(
               title: const Text("Eliminar imagen"),
-              content:
-                  const Text("¿Seguro que quieres eliminar tu foto de perfil?"),
+              content: const Text("¿Seguro que quieres eliminar tu foto de perfil?"),
               actions: [
                 TextButton(
                   onPressed: () => Navigator.pop(context, false),
@@ -193,8 +181,7 @@ class PantallaPerfilState extends State<PantallaPerfil> {
                 ),
                 TextButton(
                   onPressed: () => Navigator.pop(context, true),
-                  child: const Text("Eliminar",
-                      style: TextStyle(color: Colors.red)),
+                  child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
                 ),
               ],
             );
@@ -234,7 +221,6 @@ class PantallaPerfilState extends State<PantallaPerfil> {
 
   @override
   Widget build(BuildContext context) {
-    // Seleccionar el ImageProvider según la fuente de imagen.
     ImageProvider imageProvider;
     if (imgLocal != null && imgLocal!.isNotEmpty) {
       if (imgLocal!.startsWith('http')) {
@@ -248,49 +234,73 @@ class PantallaPerfilState extends State<PantallaPerfil> {
       imageProvider = const AssetImage("assets/avatar.png");
     }
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Perfil", style: TextStyle(fontWeight: FontWeight.bold)),
-        backgroundColor: const Color(0xFFECC099),
-      ),
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Image.asset("assets/fondo1.png", fit: BoxFit.cover), // Fondo similar al de la pantalla principal
+    return WillPopScope(
+      onWillPop: () async {
+        Navigator.pop(context, _updated);
+        return false;
+      },
+      child: Scaffold(
+        appBar: PreferredSize(
+          preferredSize: const Size.fromHeight(70),
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Color(0xFFECC099),
+              border: Border(bottom: BorderSide(color: Colors.black, width: 1)),
+            ),
+            child: AppBar(
+              automaticallyImplyLeading: true,
+              backgroundColor: Colors.transparent,
+              elevation: 0,
+              title: const Text(
+                "Perfil",
+                style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              centerTitle: true,
+              iconTheme: const IconThemeData(color: Colors.black),
+            ),
           ),
-          Center(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
+        ),
+        body: Stack(
+          children: [
+            Positioned.fill(
+              child: Image.asset("assets/fondo1.png", fit: BoxFit.cover),
+            ),
+            Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   GestureDetector(
                     onTap: _showImageOptions,
                     child: CircleAvatar(
-                      radius: 80,
+                      radius: 60,
                       backgroundImage: imageProvider,
+                      backgroundColor: Colors.grey[300],
                     ),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.black,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                    ),
                     onPressed: _showImageOptions,
                     icon: const Icon(Icons.image),
                     label: const Text("Editar imagen"),
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFECC099),
-                      padding: const EdgeInsets.symmetric(vertical: 15),
-                    ),
                   ),
                   const SizedBox(height: 40),
                   Text(
                     _userName,
-                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

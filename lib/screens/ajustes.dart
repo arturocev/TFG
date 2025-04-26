@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
-import 'package:mandangon/main.dart'; // Asegúrate de que este import apunta a tu main.dart
+import 'package:mandangon/main.dart';
 
 class AjustesScreen extends StatefulWidget {
-  final int userId; // ID del usuario
+  final int userId;
 
   const AjustesScreen({super.key, required this.userId});
 
@@ -14,10 +14,9 @@ class AjustesScreen extends StatefulWidget {
 
 class _AjustesScreenState extends State<AjustesScreen> {
   bool _showChangePassword = false;
-  bool _isLoading = false; // Indicador de carga
+  bool _isLoading = false;
   final TextEditingController _newPasswordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-      TextEditingController();
+  final TextEditingController _confirmPasswordController = TextEditingController();
 
   bool _obscureNewPassword = true;
   bool _obscureConfirmPassword = true;
@@ -72,15 +71,14 @@ class _AjustesScreenState extends State<AjustesScreen> {
         _showMessage("Contraseña actualizada con éxito.");
         _toggleChangePassword();
       } else {
-        _showMessage(
-            "Error al actualizar la contraseña. Código: ${response.statusCode}");
+        _showMessage("Error al actualizar la contraseña.");
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
       _showMessage("Error de red. Intenta de nuevo.");
-      logMessage("Error al actualizar la contraseña: $e");
+      logMessage("Error actualizar contraseña: $e");
     }
   }
 
@@ -106,33 +104,21 @@ class _AjustesScreenState extends State<AjustesScreen> {
 
       if (response.statusCode == 200) {
         _showMessage("Cuenta eliminada con éxito.");
-        // Navega a la pantalla principal (donde se encuentran los botones de inicio de sesión y registro)
         Navigator.pushAndRemoveUntil(
           context,
           MaterialPageRoute(builder: (context) => const MandangonApp()),
           (route) => false,
         );
       } else {
-        _showMessage(
-            "Error al eliminar la cuenta. Código: ${response.statusCode}");
+        _showMessage("Error al eliminar la cuenta.");
       }
     } catch (e) {
       setState(() {
         _isLoading = false;
       });
       _showMessage("Error de red. Intenta de nuevo.");
-      logMessage("Error al eliminar la cuenta: $e");
+      logMessage("Error eliminar cuenta: $e");
     }
-  }
-
-  void _logout() {
-    _showMessage("Se ha cerrado la sesión");
-    // Navega a la pantalla principal (con botones de inicio y registro) y elimina la pila de navegación.
-    Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const MandangonApp()),
-      (route) => false,
-    );
   }
 
   Future<bool> _showDeleteConfirmation() async {
@@ -140,8 +126,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
           context: context,
           builder: (context) => AlertDialog(
             title: const Text("Confirmar eliminación"),
-            content: const Text(
-                "¿Estás seguro de que quieres eliminar tu cuenta? Esta acción no se puede deshacer."),
+            content: const Text("¿Estás seguro que quieres eliminar tu cuenta?"),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop(false),
@@ -149,19 +134,16 @@ class _AjustesScreenState extends State<AjustesScreen> {
               ),
               TextButton(
                 onPressed: () => Navigator.of(context).pop(true),
-                child:
-                    const Text("Eliminar", style: TextStyle(color: Colors.red)),
+                child: const Text("Eliminar", style: TextStyle(color: Colors.red)),
               ),
             ],
           ),
-        ) ??
-        false;
+        ) ?? false;
   }
 
   void _showMessage(String message) {
     if (mounted) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(message)));
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
     }
   }
 
@@ -172,8 +154,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
         title: const Text("Términos de la empresa"),
         content: SingleChildScrollView(
           child: Text(
-            "Última actualización: [06/03/2025]\n"
-            "Bienvenido a Mandangon. Antes de utilizar nuestros servicios, te pedimos que leas y aceptes los siguientes términos y condiciones\n"
+            '''Última actualización: [06/03/2025]
+ Bienvenido a Mandangon. Antes de utilizar nuestros servicios, te pedimos que leas y aceptes los siguientes términos y condiciones\n"
             "1. Definiciones\n"
             "- Plataforma: Aplicación móvil y web de Mandangon que permite a los usuarios acceder a recetas y localizar restaurantes cercanos.\n"
             "- Usuario: Persona que utiliza la plataforma para visualizar recetas o encontrar restaurantes.\n"
@@ -195,7 +177,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
             "6. Modificaciones de los Términos\n"
             "- Nos reservamos el derecho de modificar estos términos cuando sea necesario.\n"
             "- El uso continuado de la plataforma después de los cambios implica la aceptación de los nuevos términos.\n"
-            "Si tienes dudas, contáctanos en soporte@mandangon.com.",
+            "Si tienes dudas, contáctanos en soporte@mandangon.com.'''
           ),
         ),
         actions: [
@@ -215,8 +197,8 @@ class _AjustesScreenState extends State<AjustesScreen> {
         title: const Text("Política de privacidad"),
         content: SingleChildScrollView(
           child: Text(
-            "Última actualización: [06/03/2025]\n"
-            "En Mandangon, nos tomamos muy en serio la privacidad de nuestros usuarios. Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestra aplicación.\n"
+            '''Última actualización: [06/03/2025]
+  En Mandangon, nos tomamos muy en serio la privacidad de nuestros usuarios. Esta Política de Privacidad describe cómo recopilamos, usamos y protegemos tu información personal cuando utilizas nuestra aplicación.\n"
             "1. Información que Recopilamos\n"
             "- Información personal: Nombre, correo electrónico, teléfono (si decides registrarte).\n"
             "- Datos de uso: Información sobre cómo interactúas con la aplicación, como recetas consultadas o restaurantes visitados.\n"
@@ -237,7 +219,7 @@ class _AjustesScreenState extends State<AjustesScreen> {
             "  - Solicitar la eliminación de tus datos contactándonos en soporte@mandangon.com.\n"
             "6. Cambios en la Política de Privacidad\n"
             "- Nos reservamos el derecho de modificar esta política en cualquier momento. Te notificaremos sobre cambios importantes a través de la aplicación.\n"
-            "Si tienes dudas, contáctanos en soporte@mandangon.com.",
+            "Si tienes dudas, contáctanos en soporte@mandangon.com.'''
           ),
         ),
         actions: [
@@ -253,9 +235,13 @@ class _AjustesScreenState extends State<AjustesScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      extendBodyBehindAppBar: true,
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        title: const Text('Ajustes'),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: const Icon(Icons.arrow_back, color: Colors.black),
           onPressed: () {
             if (_showChangePassword) {
               setState(() {
@@ -266,116 +252,110 @@ class _AjustesScreenState extends State<AjustesScreen> {
             }
           },
         ),
-        title: const Text("Ajustes"),
       ),
-      body: _showChangePassword
-          ? Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
+      body: Container(
+        decoration: const BoxDecoration(
+          image: DecorationImage(
+            image: AssetImage('assets/fondo1.jpg'), // tu fondo de inicio
+            fit: BoxFit.cover,
+          ),
+        ),
+        child: _showChangePassword
+            ? Padding(
+                padding: const EdgeInsets.only(top: 100.0, left: 16.0, right: 16.0, bottom: 16.0), // Ajuste aquí
+                child: Column(
+                  children: [
+                    TextField(
+                      controller: _newPasswordController,
+                      obscureText: _obscureNewPassword,
+                      decoration: InputDecoration(
+                        labelText: "Nueva contraseña",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureNewPassword ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureNewPassword = !_obscureNewPassword;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    TextField(
+                      controller: _confirmPasswordController,
+                      obscureText: _obscureConfirmPassword,
+                      decoration: InputDecoration(
+                        labelText: "Confirmar contraseña",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _obscureConfirmPassword = !_obscureConfirmPassword;
+                            });
+                          },
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _isLoading ? null : _updatePassword,
+                      style: ElevatedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
+                        ),
+                        backgroundColor: Colors.deepOrange,
+                      ),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text("Confirmar"),
+                    ),
+                  ],
+                ),
+              )
+            : ListView(
+                padding: const EdgeInsets.only(top: 100.0, left: 16.0, right: 16.0, bottom: 16.0), // Ajuste aquí también
                 children: [
-                  TextField(
-                    controller: _newPasswordController,
-                    obscureText: _obscureNewPassword,
-                    decoration: InputDecoration(
-                      labelText: "Escribe la nueva contraseña",
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureNewPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureNewPassword = !_obscureNewPassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16.0),
-                  TextField(
-                    controller: _confirmPasswordController,
-                    obscureText: _obscureConfirmPassword,
-                    decoration: InputDecoration(
-                      labelText: "Confirmar nueva contraseña",
-                      border: const OutlineInputBorder(),
-                      suffixIcon: IconButton(
-                        icon: Icon(
-                          _obscureConfirmPassword
-                              ? Icons.visibility_off
-                              : Icons.visibility,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _obscureConfirmPassword = !_obscureConfirmPassword;
-                          });
-                        },
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20.0),
-                  ElevatedButton(
-                    onPressed: _isLoading ? null : _updatePassword,
-                    child: _isLoading
-                        ? const CircularProgressIndicator(color: Colors.white)
-                        : const Text("Confirmar"),
-                  ),
+                  _buildCard(Icons.lock, "Cambiar contraseña", _toggleChangePassword),
+                  _buildCard(Icons.article, "Términos de la empresa", _showTermsAndConditions),
+                  _buildCard(Icons.privacy_tip, "Política de privacidad", _showPrivacyPolicy),
+                  _buildCard(Icons.delete_forever, "Eliminar cuenta", _deleteAccount, color: Colors.red),
+                  _buildCard(Icons.logout, "Cerrar sesión", _logout),
                 ],
               ),
-            )
-          : ListView(
-              children: [
-                ListTile(
-                  leading: const Icon(Icons.lock, color: Colors.orange),
-                  title: const Text("Cambiar contraseña"),
-                  onTap: _toggleChangePassword,
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.article, color: Colors.green),
-                  title: const Text("Términos de la empresa"),
-                  onTap: _showTermsAndConditions,
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.security, color: Colors.blue),
-                  title: const Text("Política de privacidad"),
-                  onTap: _showPrivacyPolicy,
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.delete, color: Colors.red),
-                  title: const Text("Eliminar cuenta",
-                      style: TextStyle(color: Colors.red)),
-                  onTap: () async {
-                    await _deleteAccount();
-                    // Luego de eliminar la cuenta, redirige a la pantalla de inicio (Main) con pushAndRemoveUntil
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MandangonApp()),
-                      (route) => false,
-                    );
-                  },
-                ),
-                const Divider(),
-                ListTile(
-                  leading: const Icon(Icons.logout, color: Colors.blue),
-                  title: const Text("Cerrar sesión"),
-                  onTap: () {
-                    _showMessage("Se ha cerrado la sesión");
-                    // Redirige a la pantalla de inicio (Main) con pushAndRemoveUntil
-                    Navigator.pushAndRemoveUntil(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const MandangonApp()),
-                      (route) => false,
-                    );
-                  },
-                ),
-              ],
-            ),
+      ),
+    );
+  }
+
+  Widget _buildCard(IconData icon, String title, VoidCallback onTap, {Color? color}) {
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      elevation: 6,
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      child: ListTile(
+        leading: Icon(icon, color: color ?? Colors.deepOrange),
+        title: Text(title, style: TextStyle(fontWeight: FontWeight.bold)),
+        trailing: const Icon(Icons.arrow_forward_ios),
+        onTap: onTap,
+      ),
+    );
+  }
+
+  void _logout() {
+    _showMessage("Se ha cerrado la sesión");
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const MandangonApp()),
+      (route) => false,
     );
   }
 }
