@@ -164,32 +164,62 @@ class ISEstado extends State<IniciarSesion>
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: TextButton(
-                      onPressed: () async {
-                        try {
-                          final user = await AuthUser().loginGoogle();
-                          if (user != null) {
-                            await AgregarUsuario.agregarUsuario(
-                            context,
-                            user.displayName, // Usar el nombre completo limpio
-                            user.email,
-                            "",
-                            "",
-                            "",
-                          );
-                          var idGoogle = await inicioSesion(
-                            user.email,
-                            "",
-                            context);
-                            Navigator.push(context, MaterialPageRoute(builder: (context) => PantallaPrincipal(usuarioId: idGoogle?['id'], nombreUsuario: "", usuarioNombre: user.displayName)));
-                          }
+onPressed: () async {
+  try {
+    final user = await AuthUser().loginGoogle();
+    if (user != null) {
+      bool creado = await AgregarUsuario.agregarUsuario(
+        context,
+        user.displayName!,
+        user.email!,
+        "",
+        "",
+        "",
+      );
 
-                        } on FirebaseAuthException catch(error) {
-                          print(error.message);
-                        }
-                        catch (e) {
-                          print(e);
-                        }
-                      },
+      if (creado) {
+        var idGoogle = await inicioSesion(user.email!, "", context);
+
+        if (idGoogle != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PantallaPrincipal(
+                usuarioId: idGoogle['id'],
+                usuarioNombre: user.displayName,
+                nombreUsuario: "",
+              ),
+            ),
+          );
+        } else {
+          // Usuario no encontrado
+          if (context.mounted) {
+            showDialog(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: Text("Error"),
+                content: Text("No se pudo iniciar sesión. Intenta registrarte primero."),
+                actions: [
+                  TextButton(
+                    child: Text("Aceptar"),
+                    onPressed: () => Navigator.pop(context),
+                  ),
+                ],
+              ),
+            );
+          }
+        }
+      } else {
+        // No se pudo crear el usuario
+        print("Error al crear el usuario en la base de datos.");
+      }
+    }
+  } on FirebaseAuthException catch (error) {
+    print(error.message);
+  } catch (e) {
+    print(e);
+  }
+},
                       child: const Text(
                         "Iniciar sesión con Google",
                         style: TextStyle(

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:mandangon/main.dart';
+import 'package:mandangon/services/auth_google.dart';
 
 class AjustesScreen extends StatefulWidget {
   final int userId;
@@ -351,12 +352,19 @@ En Mandangon, nos tomamos muy en serio la privacidad de nuestros usuarios. Esta 
     );
   }
 
-  void _logout() {
+  
+void _logout() async {
+  try {
+    await AuthUser().cerrarSesion(); 
     _showMessage("Se ha cerrado la sesión");
     Navigator.pushAndRemoveUntil(
       context,
       MaterialPageRoute(builder: (context) => const MandangonApp()),
       (route) => false,
     );
+  } catch (e) {
+    _showMessage("Error al cerrar sesión");
+    debugPrint("Error en logout: $e");
   }
+}
 }
